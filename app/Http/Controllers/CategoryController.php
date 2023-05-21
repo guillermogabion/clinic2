@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Twilio\Rest\Client;
 use App\Category;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Http;
 
 class CategoryController extends Controller
 {
@@ -46,4 +49,37 @@ class CategoryController extends Controller
     {
         return Category::get();
     }
+
+    public function sendSms()
+    {
+        $apiKey = 'PR-AMALI551607_QIP8K';
+        $url = 'https://api.itexmo.com/api/broadcast-2d';
+
+        $client = new GuzzleClient();
+
+        $response = $client->request('POST', $url, [
+            'form_params' => [
+                'Email' => 'amaliagraceabarrientos@gmail.com',
+                'Password' => 'January182020',
+                'ApiCode' => $apiKey,
+                'Recipients' => '09484996063',
+                'Message' => "Hii. Hello",
+                'SenderId'=> "ITEXMO SMS"
+            ]
+        ]);
+
+        $statusCode = $response->getStatusCode();
+        $responseBody = json_decode($response->getBody(), true);
+
+        if ($statusCode == 200 && $responseBody['response_code'] == 0) {
+            // Message sent successfully
+            return true;
+        } else {
+            // Error sending message
+            return false;
+        }
+            // $myVar = 'Hello, world!';
+    // dump($myVar);
+    }
+    
 }
